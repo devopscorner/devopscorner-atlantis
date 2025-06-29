@@ -87,7 +87,7 @@
 | <a name="input_eks_cluster_name"></a> [eks\_cluster\_name](#input\_eks\_cluster\_name) | Default cluster name | `string` | n/a | yes |
 | <a name="input_eks_name_env"></a> [eks\_name\_env](#input\_eks\_name\_env) | Default EKS environment name | `map(string)` | <pre>{<br/>  "lab": "lab",<br/>  "prod": "prod",<br/>  "staging": "staging"<br/>}</pre> | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Target Environment (tags) | `map(string)` | n/a | yes |
-| <a name="input_k8s_version"></a> [k8s\_version](#input\_k8s\_version) | Default EKS version | `map(string)` | <pre>{<br/>  "lab": "1.30",<br/>  "prod": "1.30",<br/>  "staging": "1.30"<br/>}</pre> | no |
+| <a name="input_k8s_version"></a> [k8s\_version](#input\_k8s\_version) | Default EKS version | `map(string)` | <pre>{<br/>  "lab": "1.32",<br/>  "prod": "1.32",<br/>  "staging": "1.32"<br/>}</pre> | no |
 | <a name="input_kms_env"></a> [kms\_env](#input\_kms\_env) | KMS Key Environment | `map(string)` | n/a | yes |
 | <a name="input_kms_key"></a> [kms\_key](#input\_kms\_key) | KMS Key References | `map(string)` | n/a | yes |
 | <a name="input_ssh_key_pair"></a> [ssh\_key\_pair](#input\_ssh\_key\_pair) | Default keyname | `map(string)` | n/a | yes |

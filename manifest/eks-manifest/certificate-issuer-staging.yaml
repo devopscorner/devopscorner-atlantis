@@ -16,7 +16,7 @@ spec:
             class: nginx
       - dns01:
           route53:
-            hostedZoneID: Z04003073DCF9BY5JJQFT
+            hostedZoneID: Z0308838GET9N8B7EGSC
             region: ap-southeast-3
             secretAccessKeySecretRef:
               name: ""

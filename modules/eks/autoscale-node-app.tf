@@ -14,7 +14,7 @@
 locals {
   #for tagging
   Environment_app     = "RND"
-  Name_app            = "EKS-1.30-DCI-APP"
+  Name_app            = "EKS-1.32-DCI-APP"
   Type_app            = "PRODUCTS"
   ProductName_app     = "EKS-DCI"
   ProductGroup_app    = "APP-EKS-DCI"

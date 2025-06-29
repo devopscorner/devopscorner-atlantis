@@ -93,8 +93,8 @@ variable "k8s_version" {
   description = "Default EKS version"
   type = map(string)
   default = {
-    lab     = "1.30"
-    staging = "1.30"
-    prod    = "1.30"
+    lab     = "1.32"
+    staging = "1.32"
+    prod    = "1.32"
   }
 }

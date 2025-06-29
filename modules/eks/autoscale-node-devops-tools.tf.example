@@ -14,7 +14,7 @@
 locals {
   #for tagging
   Environment_tools     = "RND"
-  Name_tools            = "EKS-1.30-DCI-TOOLS"
+  Name_tools            = "EKS-1.32-DCI-TOOLS"
   Type_tools            = "PRODUCTS"
   ProductName_tools     = "EKS-DCI"
   ProductGroup_tools    = "TOOLS-EKS-DCI"

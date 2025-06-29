@@ -14,7 +14,7 @@
 locals {
   #for tagging
   Environment_monitoring     = "RND"
-  Name_monitoring            = "EKS-1.30-DCI-MONITORING"
+  Name_monitoring            = "EKS-1.32-DCI-MONITORING"
   Type_monitoring            = "PRODUCTS"
   ProductName_monitoring     = "EKS-DCI"
   ProductGroup_monitoring    = "MONITORING-EKS-DCI"

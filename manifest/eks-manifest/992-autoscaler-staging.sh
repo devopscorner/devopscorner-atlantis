@@ -4,7 +4,7 @@ export AWS_REGION="ap-southeast-3"
 export ACCOUNT_ID="112233445566"
 export EKS_CLUSTER="dci-eks-staging"
 export EKS_VPC_ID="vpc-0ee08f6bf1c3840a9"
-export AUTOSCALLER_VERSION="1.30.1"
+export AUTOSCALLER_VERSION="1.32.1"
 export SSL_CERT_ARN="arn:aws:acm:${AWS_REGION}:${ACCOUNT_ID}:certificate/HASH_NUMBER"
 
 kubectl config use-context arn:aws:eks:ap-southeast-3:${ACCOUNT_ID}:cluster/${EKS_CLUSTER}

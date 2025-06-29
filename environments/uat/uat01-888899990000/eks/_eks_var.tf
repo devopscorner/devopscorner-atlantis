@@ -67,12 +67,12 @@ variable "access_my_ip" {
 variable "dns_zone" {
   type = map(string)
   default = {
-    dev     = "Z04003073DCF9BY5JJQFT"
-    uat     = "Z04003073DCF9BY5JJQFT"
-    lab     = "Z04003073DCF9BY5JJQFT"
-    staging = "Z04003073DCF9BY5JJQFT"
-    nonprod = "Z04003073DCF9BY5JJQFT"
-    prod    = "Z04003073DCF9BY5JJQFT"
+    dev     = "Z0308838GET9N8B7EGSC"
+    uat     = "Z0308838GET9N8B7EGSC"
+    lab     = "Z0308838GET9N8B7EGSC"
+    staging = "Z0308838GET9N8B7EGSC"
+    nonprod = "Z0308838GET9N8B7EGSC"
+    prod    = "Z0308838GET9N8B7EGSC"
   }
 }
 
@@ -125,10 +125,10 @@ variable "eks_name_env" {
 variable "k8s_version" {
   type = map(string)
   default = {
-    lab     = "1.30"
-    staging = "1.30"
-    nonprod = "1.30"
-    prod    = "1.30"
+    lab     = "1.32"
+    staging = "1.32"
+    nonprod = "1.32"
+    prod    = "1.32"
   }
 }
 
@@ -187,21 +187,21 @@ variable "default_tags" {
   default = {
     staging = {
       Environment     = "STG"
-      Name            = "EKS-1.30"
+      Name            = "EKS-1.32"
       Department      = "DEVOPS"
       DepartmentGroup = "STG-DEVOPS"
       ResourceGroup   = "STG-EKS"
     }
     nonprod = {
       Environment     = "UAT"
-      Name            = "EKS-1.30"
+      Name            = "EKS-1.32"
       Department      = "DEVOPS"
       DepartmentGroup = "UAT-DEVOPS"
       ResourceGroup   = "UAT-EKS"
     }
     prod = {
       Environment     = "PROD"
-      Name            = "EKS-1.30"
+      Name            = "EKS-1.32"
       Department      = "DEVOPS"
       DepartmentGroup = "PROD-DEVOPS"
       ResourceGroup   = "PROD-EKS"

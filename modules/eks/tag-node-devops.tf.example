@@ -14,8 +14,8 @@
 locals {
   #for tagging
   Environment_devops      = "STG"
-  Name_monitoring         = "EKS-1.30-DCI-MONITORING"
-  Name_tools              = "EKS-1.30-DCI-TOOLS"
+  Name_monitoring         = "EKS-1.32-DCI-MONITORING"
+  Name_tools              = "EKS-1.32-DCI-TOOLS"
   Type_devops             = "PRODUCTS"
   ProductName_monitoring  = "EKS-DCI"
   ProductName_tools       = "EKS-DCI"

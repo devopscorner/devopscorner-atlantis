@@ -19,7 +19,7 @@ aws eks describe-addon \
 
 aws eks describe-addon-versions \
     --addon-name aws-ebs-csi-driver \
-    --kubernetes-version 1.30 \
+    --kubernetes-version 1.32 \
     --region ${AWS_REGION} \
     --query "addons[].addonVersions[].[addonVersion, compatibilities[].defaultVersion]" \
     --output text
