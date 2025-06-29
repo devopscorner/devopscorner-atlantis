@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "jumppod.fullname" . }}
+  namespace: {{ .Values.serviceAccount.namespace }}
+  labels:
+    {{- include "jumppod.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "jumppod.fullname" . }}  # Required for StatefulSet
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "jumppod.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jumppod.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "jumppod.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.application.enabled }}
+          env:
+            {{- toYaml .Values.application.env | nindent 12 }}
+          {{- end }}
+          {{- if .Values.envFrom.enabled }}
+          envFrom:
+            {{- toYaml .Values.envFrom.envFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.container }}
+          ports:
+          {{- with .Values.container.ports }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{ end }}
+          # Uncomment and configure liveness and readiness probes as needed
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if or .Values.configMap.enabled .Values.secret.enabled .Values.persistence.enabled (and .Values.volumes (index .Values.volumes "enabled")) }}
+          volumeMounts:
+            {{- if and .Values.persistence .Values.persistence.enabled }}
+            - name: {{ template "jumppod.fullname" . }}
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- else if and .Values.configMap .Values.configMap.enabled }}
+            - name: {{ .Values.configMap.name }}
+              mountPath: {{ .Values.configMap.mountPath }}
+              readOnly: {{ .Values.configMap.readOnly }}
+            {{- else if and .Values.secret .Values.secret.enabled }}
+            - name: {{ .Values.secret.name }}
+              mountPath: {{ .Values.secret.mountPath }}
+              subPath: {{ .Values.secret.subPath }}
+              readOnly: {{ .Values.secret.readOnly }}
+            {{- else if and .Values.volumes .Values.volumes.enabled }}
+            - name: {{ .Values.volumes.name }}
+              mountPath: {{ .Values.volumes.mountPath }}
+            {{- end }}
+          {{- end }}
+      {{- if .Values.nodeSelector.enabled -}}
+      {{- with .Values.nodeSelector.select }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if or .Values.configMap.enabled .Values.secret.enabled .Values.persistence.enabled .Values.volumes .Values.volumes.enabled }}
+  volumeClaimTemplates:
+    {{- if and .Values.configMap .Values.configMap.enabled }}
+    - metadata:
+        name: {{ .Values.configMap.name }}
+    {{- else if and .Values.secret .Values.secret.enabled }}
+    - metadata:
+        name: {{ .Values.secret.name }}
+    {{- else if and .Values.persistence .Values.persistence.enabled }}
+    - metadata:
+        name: {{ template "jumppod.fullname" . }}
+    {{- else if and .Values.volumes .Values.volumes.enabled }}
+    - metadata:
+        name: {{ .Values.volumes.name }}
+    {{- end }}
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.persistence.storageClass }}
+        {{- if (eq "-" .Values.persistence.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: "{{ .Values.persistence.storageClass }}"
+        {{- end }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+  {{- end }}
+  {{- if .Values.updateStrategy }}
+  updateStrategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
+  {{- end }}

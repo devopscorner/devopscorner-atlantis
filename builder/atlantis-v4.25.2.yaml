@@ -1,0 +1,341 @@
+version: 3
+
+automerge: true
+autodiscover:
+  mode: auto
+delete_source_branch_on_merge: true
+parallel_plan: true
+parallel_apply: true
+abort_on_execution_order_fail: true
+
+projects:
+- name: dci-main
+  branch: /main/
+  dir: .
+  workspace: default
+  terraform_version: &tf_version v1.9.4
+  execution_order_group: 1
+  autoplan:
+    when_modified: &tf_files
+      - "../modules/**/*.tf"
+      - ".terraform.lock.hcl"
+      - "*.json"
+      - "*.yaml"
+      - "*.js"
+      - "*.tf"
+      - "*.tfvars"
+      - "*.hcl"
+    enabled: true
+  plan_requirements: [approved]
+  apply_requirements: [approved]
+  workflow: main-workflow
+
+- name: dci-dev01-default
+  branch: /dev01/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 2
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev01-default-workflow
+
+- name: dci-dev01-staging
+  branch: /dev01/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 2
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev01-staging-workflow
+
+- name: dci-dev01-feature
+  branch: /dev01/
+  dir: .
+  workspace: feature
+  terraform_version: *tf_version
+  execution_order_group: 2
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev01-feature-workflow
+
+- name: dci-dev02-default
+  branch: /dev02/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 3
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev02-default-workflow
+
+- name: dci-dev02-staging
+  branch: /dev02/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 3
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev02-staging-workflow
+
+- name: dci-dev03-default
+  branch: /dev03/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 4
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev03-default-workflow
+
+- name: dci-dev03-staging
+  branch: /dev03/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 4
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev03-staging-workflow
+
+- name: dci-dev04-default
+  branch: /dev04/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 5
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev04-default-workflow
+
+- name: dci-dev04-staging
+  branch: /dev04/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 5
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev04-staging-workflow
+
+- name: dci-dev05-default
+  branch: /dev05/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 6
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev05-default-workflow
+
+- name: dci-dev05-staging
+  branch: /dev05/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 6
+  autoplan:
+    when_modified: *tf_files
+  workflow: dev05-staging-workflow
+
+- name: dci-uat01-default
+  branch: /uat01/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 7
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat01-default-workflow
+
+- name: dci-uat01-staging
+  branch: /uat01/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 7
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat01-staging-workflow
+
+- name: dci-uat02-default
+  branch: /uat02/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 8
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat02-default-workflow
+
+- name: dci-uat02-staging
+  branch: /uat02/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 8
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat02-staging-workflow
+
+- name: dci-uat03-default
+  branch: /uat03/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 9
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat03-default-workflow
+
+- name: dci-uat03-staging
+  branch: /uat03/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 9
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat03-staging-workflow
+
+- name: dci-uat04-default
+  branch: /uat04/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 10
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat04-default-workflow
+
+- name: dci-uat04-staging
+  branch: /uat04/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 10
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat04-staging-workflow
+
+- name: dci-uat05-default
+  branch: /uat05/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 11
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat05-default-workflow
+
+- name: dci-uat05-staging
+  branch: /uat05/
+  dir: .
+  workspace: staging
+  terraform_version: *tf_version
+  execution_order_group: 11
+  autoplan:
+    when_modified: *tf_files
+  workflow: uat05-staging-workflow
+
+- name: dci-prod01-default
+  branch: /prod01/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 12
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod01-default-workflow
+
+- name: dci-prod01-production
+  branch: /prod01/
+  dir: .
+  workspace: production
+  terraform_version: *tf_version
+  execution_order_group: 12
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod01-production-workflow
+
+- name: dci-prod02-default
+  branch: /prod02/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 13
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod02-default-workflow
+
+- name: dci-prod02-production
+  branch: /prod02/
+  dir: .
+  workspace: production
+  terraform_version: *tf_version
+  execution_order_group: 13
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod02-production-workflow
+
+- name: dci-prod03-default
+  branch: /prod03/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 14
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod03-default-workflow
+
+- name: dci-prod03-production
+  branch: /prod03/
+  dir: .
+  workspace: production
+  terraform_version: *tf_version
+  execution_order_group: 14
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod03-production-workflow
+
+- name: dci-prod04-default
+  branch: /prod04/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 15
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod04-default-workflow
+
+- name: dci-prod04-production
+  branch: /prod04/
+  dir: .
+  workspace: production
+  terraform_version: *tf_version
+  execution_order_group: 15
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod04-production-workflow
+
+- name: dci-prod05-default
+  branch: /prod05/
+  dir: .
+  workspace: default
+  terraform_version: *tf_version
+  execution_order_group: 16
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod05-default-workflow
+
+- name: dci-prod05-production
+  branch: /prod05/
+  dir: .
+  workspace: production
+  terraform_version: *tf_version
+  execution_order_group: 16
+  autoplan:
+    when_modified: *tf_files
+  workflow: prod05-production-workflow

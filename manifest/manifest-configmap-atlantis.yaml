@@ -1,0 +1,109 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-aws-credentials
+  namespace: devops-tools
+data:
+  credentials: |
+    [default]
+    region = ap-southeast-3
+
+    [DCI-TF-User-Executor]
+    # TF-User-Executor-112233445566_accessKeys
+    aws_access_key_id = ${MANAGEMENT_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${MANAGEMENT_AWS_SECRET_ACCESS_KEY}
+
+    [DCI-TF-User-Executor-DEV01]
+    # TF-User-Executor-098765432101_accessKeys
+    aws_access_key_id = ${DEV01_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${DEV01_AWS_SECRET_ACCESS_KEY}
+
+    [DCI-TF-User-Executor-DEV02]
+    # TF-User-Executor-555566667777_accessKeys
+    aws_access_key_id = ${DEV02_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${DEV02_AWS_SECRET_ACCESS_KEY}
+
+    [DCI-TF-User-Executor-UAT01]
+    # TF-User-Executor-888899990000_accessKeys
+    aws_access_key_id = ${UAT01_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${UAT01_AWS_SECRET_ACCESS_KEY}
+
+    [DCI-TF-User-Executor-UAT02]
+    # TF-User-Executor-123123123123_accessKeys
+    aws_access_key_id = ${UAT02_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${UAT02_AWS_SECRET_ACCESS_KEY}
+
+    [DCI-TF-User-Executor-PROD01]
+    # TF-User-Executor-456456456456_accessKeys
+    aws_access_key_id = ${PROD01_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${PROD01_AWS_SECRET_ACCESS_KEY}
+
+    [DCI-TF-User-Executor-PROD02]
+    # TF-User-Executor-789789789789_accessKeys
+    aws_access_key_id = ${PROD02_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${PROD02_AWS_SECRET_ACCESS_KEY}
+
+    [DCI-TF-User-Executor-Logs]
+    # TF-User-Executor-123456789012_accessKeys
+    aws_access_key_id = ${LOGS_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${LOGS_AWS_SECRET_ACCESS_KEY}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-aws-config
+  namespace: devops-tools
+data:
+  config: |
+    [default]
+    region = ap-southeast-3
+
+    [profile DCI-TF-User-Executor]
+    role_arn = arn:aws:iam::112233445566:role/TF-Central-Role_112233445566
+    source_profile = DCI-TF-User-Executor
+    region = ap-southeast-3
+    output = json
+
+    [profile DCI-TF-User-Executor-DEV01]
+    role_arn = arn:aws:iam::098765432101:role/TF-Central-Role_098765432101
+    source_profile = DCI-TF-User-Executor-DEV01
+    region = ap-southeast-3
+    output = json
+
+    [profile DCI-TF-User-Executor-DEV02]
+    role_arn = arn:aws:iam::555566667777:role/TF-Central-Role_555566667777
+    source_profile = DCI-TF-User-Executor-DEV02
+    region = ap-southeast-3
+    output = json
+
+    [profile DCI-TF-User-Executor-UAT01]
+    role_arn = arn:aws:iam::888899990000:role/TF-Central-Role_888899990000
+    source_profile = DCI-TF-User-Executor-UAT01
+    region = ap-southeast-3
+    output = json
+
+    [profile DCI-TF-User-Executor-UAT02]
+    role_arn = arn:aws:iam::123123123123:role/TF-Central-Role_123123123123
+    source_profile = DCI-TF-User-Executor-UAT02
+    region = ap-southeast-3
+    output = json
+
+    [profile DCI-TF-User-Executor-PROD01]
+    role_arn = arn:aws:iam::456456456456:role/TF-Central-Role_456456456456
+    source_profile = DCI-TF-User-Executor-PROD01
+    region = ap-southeast-3
+    output = json
+
+    [profile DCI-TF-User-Executor-PROD02]
+    role_arn = arn:aws:iam::789789789789:role/TF-Central-Role_789789789789
+    source_profile = DCI-TF-User-Executor-PROD02
+    region = ap-southeast-3
+    output = json
+
+    [profile DCI-TF-User-Executor-Logs]
+    role_arn = arn:aws:iam::123456789012:role/TF-Central-Role_123456789012
+    source_profile = DCI-TF-User-Executor-Logs
+    region = ap-southeast-3
+    output = json

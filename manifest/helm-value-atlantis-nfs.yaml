@@ -1,0 +1,626 @@
+---
+fullnameOverride: "devopscorner-atlantis"
+nameOverride: "devopscorner-atlantis"
+
+atlantisUrl: "https://atlantis.devopscorner.id"
+orgAllowlist: "github.com/devopscorner/devopscorner-atlantis/*"
+logLevel: "info"
+
+gitconfigReadOnly: true
+
+image:
+  # repository: ghcr.io/runatlantis/atlantis
+  # tag: v0.27.1
+  # repository: devopscorner/devopscorner-atlantis
+  # tag: "1.0"
+  repository: 112233445566.dkr.ecr.ap-southeast-3.amazonaws.com/devopscorner/devopscorner-atlantis
+  tag: "latest"
+  pullPolicy: Always
+
+basicAuth:
+  username: "devopscorner-admin"
+  password: "3cnjoBgrMoKkv78s"
+
+serviceAccount:
+  create: true
+  mount: true
+  name: atlantis
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::112233445566:role/TF-Central-Role_112233445566
+
+commonLabels: &common_labels
+  app: atlantis
+  env: staging
+  team: devops
+
+# Common probe settings
+livenessProbe:
+  enabled: true
+  periodSeconds: 60
+  initialDelaySeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+  scheme: HTTP
+
+readinessProbe:
+  enabled: true
+  periodSeconds: 60
+  initialDelaySeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+  scheme: HTTP
+
+service:
+  type: NodePort
+  annotations: {}
+  port: 80
+  portName: atlantis
+  targetPort: 4141
+  nodePort: null
+  loadBalancerIP: null
+  loadBalancerSourceRanges: []
+  externalTrafficPolicy: null
+
+statefulSet:
+  annotations: {}
+  labels: {}
+  securityContext:
+    fsGroup: 100
+    runAsUser: 100
+    runAsGroup: 100
+    fsGroupChangePolicy: "OnRootMismatch"
+  priorityClassName: ""
+  updateStrategy: {}
+  shareProcessNamespace: false
+
+# Volume configurations
+extraVolumes:
+  - name: atlantis-config
+    configMap:
+      name: atlantis-config
+      defaultMode: 0600
+  - name: aws-credentials
+    configMap:
+      name: atlantis-aws-credentials
+      defaultMode: 0600
+  - name: aws-config
+    configMap:
+      name: atlantis-aws-config
+      defaultMode: 0600
+  - name: atlantis-config-tf-management
+    configMap:
+      name: atlantis-config-tf-management
+      defaultMode: 0600
+  - name: atlantis-config-tf-dev01
+    configMap:
+      name: atlantis-config-tf-dev01
+      defaultMode: 0600
+  - name: atlantis-config-tf-dev02
+    configMap:
+      name: atlantis-config-tf-dev02
+      defaultMode: 0600
+  - name: atlantis-config-tf-uat01
+    configMap:
+      name: atlantis-config-tf-uat01
+      defaultMode: 0600
+  - name: atlantis-config-tf-uat02
+    configMap:
+      name: atlantis-config-tf-uat02
+      defaultMode: 0600
+  - name: atlantis-config-tf-prod01
+    configMap:
+      name: atlantis-config-tf-prod01
+      defaultMode: 0600
+  - name: atlantis-config-tf-prod02
+    configMap:
+      name: atlantis-config-tf-prod02
+      defaultMode: 0600
+
+extraVolumeMounts:
+  - name: atlantis-config
+    mountPath: /atlantis/atlantis.yaml
+    subPath: config
+    readOnly: true
+  - name: aws-credentials
+    mountPath: /home/atlantis/.aws/credentials
+    subPath: credentials
+    readOnly: true
+  - name: aws-config
+    mountPath: /home/atlantis/.aws/config
+    subPath: config
+    readOnly: true
+  - name: atlantis-config-tf-management
+    mountPath: /atlantis/config/management/backend.tf
+    subPath: backend.tf
+    readOnly: true
+  - name: atlantis-config-tf-management
+    mountPath: /atlantis/config/management/backend.tfvars
+    subPath: backend.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-management
+    mountPath: /atlantis/config/management/management.tfvars
+    subPath: management.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-dev01
+    mountPath: /atlantis/config/dev01/backend.tf
+    subPath: backend.tf
+    readOnly: true
+  - name: atlantis-config-tf-dev01
+    mountPath: /atlantis/config/dev01/backend.tfvars
+    subPath: backend.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-dev01
+    mountPath: /atlantis/config/dev01/dev01.tfvars
+    subPath: dev01.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-dev02
+    mountPath: /atlantis/config/dev02/backend.tf
+    subPath: backend.tf
+    readOnly: true
+  - name: atlantis-config-tf-dev02
+    mountPath: /atlantis/config/dev02/backend.tfvars
+    subPath: backend.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-dev02
+    mountPath: /atlantis/config/dev02/dev02.tfvars
+    subPath: dev02.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-uat01
+    mountPath: /atlantis/config/uat01/backend.tf
+    subPath: backend.tf
+    readOnly: true
+  - name: atlantis-config-tf-uat01
+    mountPath: /atlantis/config/uat01/backend.tfvars
+    subPath: backend.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-uat01
+    mountPath: /atlantis/config/uat01/uat01.tfvars
+    subPath: uat01.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-uat02
+    mountPath: /atlantis/config/uat02/backend.tf
+    subPath: backend.tf
+    readOnly: true
+  - name: atlantis-config-tf-uat02
+    mountPath: /atlantis/config/uat02/backend.tfvars
+    subPath: backend.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-uat02
+    mountPath: /atlantis/config/uat02/uat02.tfvars
+    subPath: uat02.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-prod01
+    mountPath: /atlantis/config/prod01/backend.tf
+    subPath: backend.tf
+    readOnly: true
+  - name: atlantis-config-tf-prod01
+    mountPath: /atlantis/config/prod01/backend.tfvars
+    subPath: backend.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-prod01
+    mountPath: /atlantis/config/prod01/prod01.tfvars
+    subPath: prod01.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-prod02
+    mountPath: /atlantis/config/prod02/backend.tf
+    subPath: backend.tf
+    readOnly: true
+  - name: atlantis-config-tf-prod02
+    mountPath: /atlantis/config/prod02/backend.tfvars
+    subPath: backend.tfvars
+    readOnly: true
+  - name: atlantis-config-tf-prod02
+    mountPath: /atlantis/config/prod02/prod02.tfvars
+    subPath: prod02.tfvars
+    readOnly: true
+
+environment:
+  ## GitHub Configuration
+  ATLANTIS_GH_HOSTNAME: github.com
+  ATLANTIS_GH_USER: devopscorner
+  ATLANTIS_WEB_HOSTNAME: atlantis.devopscorner.id
+  ## Permissions
+  ATLANTIS_ALLOW_COMMANDS: "version,plan,apply,unlock,approve_policies"
+  ## AWS Base Configuration
+  AWS_REGION: ap-southeast-3
+  AWS_SHARED_CREDENTIALS_FILE: /home/atlantis/.aws/credentials
+  AWS_CONFIG_FILE: /home/atlantis/.aws/config
+  ATLANTIS_CONFIG: /atlantis/atlantis.yaml
+  ## AWS Accounts Environment
+  DCI_MANAGEMENT_ACCOUNT: "112233445566"
+  DCI_SECURITY_ACCOUNT: "586794473955"
+  DCI_LOGS_ACCOUNT: "123456789012"
+  DCI_BILLING_ACCOUNT: "444455556666"
+  DCI_DEV01_ACCOUNT: "098765432101"
+  DCI_DEV02_ACCOUNT: "555566667777"
+  DCI_UAT01_ACCOUNT: "888899990000"
+  DCI_UAT02_ACCOUNT: "123123123123"
+  DCI_PROD01_ACCOUNT: "456456456456"
+  DCI_PROD02_ACCOUNT: "789789789789"
+  ## Other Configuration
+  DEFAULT_CONFTEST_VERSION: "0.56.0"
+  TZ: "Asia/Jakarta"
+
+environmentSecrets:
+  - name: ATLANTIS_GH_TOKEN
+    secretKeyRef:
+      name: atlantis-gh-vcs
+      key: token
+  - name: ATLANTIS_GH_WEBHOOK_SECRET
+    secretKeyRef:
+      name: atlantis-gh-vcs
+      key: webhook-secret
+
+resources:
+  requests:
+    cpu: 300m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
+
+volumeClaim:
+  enabled: true
+  dataStorage: 30Gi
+  storageClassName: "nfs-client"
+  accessModes: ["ReadWriteOnce"]
+
+nodeSelector:
+  node: "devopscorner-app"
+
+# Ingress configuration
+ingress:
+  enabled: true
+  ingressName: devopscorner-atlantis-ingress
+  ingressClassName: nginx
+  annotations: &ingress_annotations
+    ingress.kubernetes.io/ssl-passthrough: "true"
+    ingress.kubernetes.io/whitelist-source-range: "10.103.0.0/16"
+    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    # nginx.ingress.kubernetes.io/auth-realm: "Authentication Required - Atlantis"
+    # nginx.ingress.kubernetes.io/auth-secret: "devopscorner-auth"
+    # nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "*"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+  paths:
+    - path: "/"
+      pathType: Prefix
+      service: devopscorner-atlantis
+      port: 4141
+  host: "atlantis.devopscorner.id"
+  tls:
+    - secretName: tls-atlantis-devopscorner
+      hosts:
+        - atlantis.devopscorner.id
+
+repoConfig: |
+  # Repository configurations
+  repos:
+  - id: github.com/devopscorner/devopscorner-atlantis
+    branch: /.*/
+    apply_requirements: [approved, mergeable]
+    allowed_overrides: [workflow, plan_requirements, apply_requirements]
+    allow_custom_workflows: true
+    delete_source_branch_on_merge: true
+    workflow: dynamic-workflow
+
+  workflows:
+    # Main branch workflow
+    main-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy main default plan
+      apply:
+        steps:
+        - run: atlantis-deploy main default apply
+
+    # Dynamic workflow for fallback
+    dynamic-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy $ATLANTIS_PULL_REQUEST_HEAD_BRANCH default plan
+      apply:
+        steps:
+        - run: atlantis-deploy $ATLANTIS_PULL_REQUEST_HEAD_BRANCH default apply
+
+    # DEV Workflows - Default workspace
+    dev01-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev01 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev01 default apply
+
+    dev01-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev01 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev01 staging apply
+
+    dev01-feature-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev01 feature plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev01 feature apply
+
+    dev02-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev02 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev02 default apply
+
+    dev02-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev02 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev02 staging apply
+
+    dev03-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev03 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev03 default apply
+
+    dev03-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev03 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev03 staging apply
+
+    dev04-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev04 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev04 default apply
+
+    dev04-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev04 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev04 staging apply
+
+    dev05-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev05 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev05 default apply
+
+    dev05-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy dev05 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy dev05 staging apply
+
+    # UAT Workflows
+    uat01-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat01 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat01 default apply
+
+    uat01-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat01 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat01 staging apply
+
+    uat02-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat02 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat02 default apply
+
+    uat02-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat02 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat02 staging apply
+
+    uat03-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat03 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat03 default apply
+
+    uat03-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat03 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat03 staging apply
+
+    uat04-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat04 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat04 default apply
+
+    uat04-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat04 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat04 staging apply
+
+    uat05-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat05 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat05 default apply
+
+    uat05-staging-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy uat05 staging plan
+      apply:
+        steps:
+        - run: atlantis-deploy uat05 staging apply
+
+    # PROD Workflows
+    prod01-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod01 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod01 default apply
+
+    prod01-production-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod01 production plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod01 production apply
+
+    prod02-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod02 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod02 default apply
+
+    prod02-production-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod02 production plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod02 production apply
+
+    prod03-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod03 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod03 default apply
+
+    prod03-production-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod03 production plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod03 production apply
+
+    prod04-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod04 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod04 default apply
+
+    prod04-production-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod04 production plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod04 production apply
+
+    prod05-default-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod05 default plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod05 default apply
+
+    prod05-production-workflow:
+      plan:
+        steps:
+        - run: atlantis-deploy prod05 production plan
+      apply:
+        steps:
+        - run: atlantis-deploy prod05 production apply
+
+    # Feature branch workflows for dynamic workspace support
+    feature-workflow:
+      plan:
+        steps:
+        - run: |
+            FEATURE_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/feature\///' | sed 's/\//-/g')
+            atlantis-deploy dev01 feature-$FEATURE_NAME plan
+      apply:
+        steps:
+        - run: |
+            FEATURE_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/feature\///' | sed 's/\//-/g')
+            atlantis-deploy dev01 feature-$FEATURE_NAME apply
+
+    # Bugfix branch workflows
+    bugfix-workflow:
+      plan:
+        steps:
+        - run: |
+            BUGFIX_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/bugfix\///' | sed 's/\//-/g')
+            atlantis-deploy dev01 bugfix-$BUGFIX_NAME plan
+      apply:
+        steps:
+        - run: |
+            BUGFIX_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/bugfix\///' | sed 's/\//-/g')
+            atlantis-deploy dev01 bugfix-$BUGFIX_NAME apply
+
+    # Hotfix branch workflows
+    hotfix-workflow:
+      plan:
+        steps:
+        - run: |
+            HOTFIX_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/hotfix\///' | sed 's/\//-/g')
+            atlantis-deploy prod01 hotfix-$HOTFIX_NAME plan
+      apply:
+        steps:
+        - run: |
+            HOTFIX_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/hotfix\///' | sed 's/\//-/g')
+            atlantis-deploy prod01 hotfix-$HOTFIX_NAME apply

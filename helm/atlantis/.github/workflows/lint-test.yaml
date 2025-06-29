@@ -1,0 +1,84 @@
+name: Lint and Test Charts
+
+on:
+  pull_request:
+    paths:
+      - 'charts/atlantis/**'
+      - 'ct.yaml'
+
+defaults:
+  run:
+    shell: bash
+
+permissions: read-all
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          # renovate: datasource=github-tags depName=helm packageName=helm/helm
+          version: v3.16.3
+
+      - uses: actions/setup-python@v5
+        with:
+          # renovate: datasource=docker depName=python
+          python-version: '3.13'
+          check-latest: true
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed \
+            --config ct.yaml \
+            --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check if docs are updated
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          make docs
+          if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+            echo "Documentation not up to date." >&2
+            echo "Please run 'make docs' from the repository root and commit changes!" >&2
+            git diff
+            exit 1
+          else
+            echo "Documentation is up to date." >&2
+          fi
+
+      - name: Install helm unittests
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          make unit-test-install
+
+      - name: Run chart-testing (lint)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          ct lint \
+            --config ct.yaml \
+            --target-branch ${{ github.event.repository.default_branch }}
+
+
+      - name: Create kind cluster
+        if: steps.list-changed.outputs.changed == 'true'
+        uses: helm/kind-action@v1.10.0
+
+      - name: Run chart-testing (install)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          ct install \
+            --config ct.yaml \
+            --target-branch ${{ github.event.repository.default_branch }}

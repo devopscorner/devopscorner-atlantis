@@ -1,0 +1,238 @@
+# manifest-configmap-atlantis-tf-configs.yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-config-tf-management
+  namespace: devops-tools
+data:
+  backend.tf: |
+    terraform {
+      backend "s3" {
+        region         = "ap-southeast-3"
+        bucket         = "tf-state-112233445566-ap-southeast-3"
+        dynamodb_table = "ddb-tf-state-112233445566-ap-southeast-3"
+        key            = "devopscorner/112233445566/atlantis/tfstate"
+        encrypt        = true
+      }
+    }
+
+  backend.tfvars: |
+    region         = "ap-southeast-3"
+    bucket         = "tf-state-112233445566-ap-southeast-3"
+    dynamodb_table = "ddb-tf-state-112233445566-ap-southeast-3"
+    key            = "devopscorner/112233445566/atlantis/tfstate"
+    encrypt        = true
+
+  management.tfvars: |
+    region="ap-southeast-3"
+    common-tags={
+      "Owner"="DCI"
+      "Environment"="PROD"
+    }
+
+    ses-source-email="support@devopscorner.id"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-config-tf-dev01
+  namespace: devops-tools
+data:
+  backend.tf: |
+    terraform {
+      backend "s3" {
+        region         = "ap-southeast-3"
+        bucket         = "tf-state-098765432101-ap-southeast-3"
+        dynamodb_table = "ddb-tf-state-098765432101-ap-southeast-3"
+        key            = "devopscorner/098765432101/atlantis/tfstate"
+        encrypt        = true
+      }
+    }
+
+  backend.tfvars: |
+    region         = "ap-southeast-3"
+    bucket         = "tf-state-098765432101-ap-southeast-3"
+    dynamodb_table = "ddb-tf-state-098765432101-ap-southeast-3"
+    key            = "devopscorner/098765432101/atlantis/tfstate"
+    encrypt        = true
+
+  dev01.tfvars: |
+    region="ap-southeast-3"
+    common-tags={
+      "Owner"="DCI"
+      "Environment"="STAGING"
+    }
+
+    ses-source-email="support@devopscorner.id"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-config-tf-dev02
+  namespace: devops-tools
+data:
+  backend.tf: |
+    terraform {
+      backend "s3" {
+        region         = "ap-southeast-3"
+        bucket         = "tf-state-555566667777-ap-southeast-3"
+        dynamodb_table = "ddb-tf-state-555566667777-ap-southeast-3"
+        key            = "devopscorner/555566667777/atlantis/tfstate"
+        encrypt        = true
+      }
+    }
+
+  backend.tfvars: |
+    region         = "ap-southeast-3"
+    bucket         = "tf-state-555566667777-ap-southeast-3"
+    dynamodb_table = "ddb-tf-state-555566667777-ap-southeast-3"
+    key            = "devopscorner/555566667777/atlantis/tfstate"
+    encrypt        = true
+
+  dev02.tfvars: |
+    region="ap-southeast-3"
+    common-tags={
+      "Owner"="DCI"
+      "Environment"="STAGING"
+    }
+
+    ses-source-email="support@devopscorner.id"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-config-tf-uat01
+  namespace: devops-tools
+data:
+  backend.tf: |
+    terraform {
+      backend "s3" {
+        region         = "ap-southeast-3"
+        bucket         = "tf-state-888899990000-ap-southeast-3"
+        dynamodb_table = "ddb-tf-state-888899990000-ap-southeast-3"
+        key            = "devopscorner/888899990000/atlantis/tfstate"
+        encrypt        = true
+      }
+    }
+
+  backend.tfvars: |
+    region         = "ap-southeast-3"
+    bucket         = "tf-state-888899990000-ap-southeast-3"
+    dynamodb_table = "ddb-tf-state-888899990000-ap-southeast-3"
+    key            = "devopscorner/888899990000/atlantis/tfstate"
+    encrypt        = true
+
+  uat01.tfvars: |
+    region="ap-southeast-3"
+    common-tags={
+      "Owner"="DCI"
+      "Environment"="UAT"
+    }
+
+    ses-source-email="support@devopscorner.id"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-config-tf-uat02
+  namespace: devops-tools
+data:
+  backend.tf: |
+    terraform {
+      backend "s3" {
+        region         = "ap-southeast-3"
+        bucket         = "tf-state-23123123123-ap-southeast-3"
+        dynamodb_table = "ddb-tf-state-23123123123-ap-southeast-3"
+        key            = "devopscorner/23123123123/atlantis/tfstate"
+        encrypt        = true
+      }
+    }
+
+  backend.tfvars: |
+    region         = "ap-southeast-3"
+    bucket         = "tf-state-23123123123-ap-southeast-3"
+    dynamodb_table = "ddb-tf-state-23123123123-ap-southeast-3"
+    key            = "devopscorner/23123123123/atlantis/tfstate"
+    encrypt        = true
+
+  uat02.tfvars: |
+    region="ap-southeast-3"
+    common-tags={
+      "Owner"="DCI"
+      "Environment"="UAT"
+    }
+
+    ses-source-email="support@devopscorner.id"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-config-tf-prod01
+  namespace: devops-tools
+data:
+  backend.tf: |
+    terraform {
+      backend "s3" {
+        region         = "ap-southeast-3"
+        bucket         = "tf-state-456456456456-ap-southeast-3"
+        dynamodb_table = "ddb-tf-state-456456456456-ap-southeast-3"
+        key            = "devopscorner/456456456456/atlantis/tfstate"
+        encrypt        = true
+      }
+    }
+
+  backend.tfvars: |
+    region         = "ap-southeast-3"
+    bucket         = "tf-state-456456456456-ap-southeast-3"
+    dynamodb_table = "ddb-tf-state-456456456456-ap-southeast-3"
+    key            = "devopscorner/456456456456/atlantis/tfstate"
+    encrypt        = true
+
+  prod01.tfvars: |
+    region="ap-southeast-3"
+    common-tags={
+      "Owner"="DCI"
+      "Environment"="PROD"
+    }
+
+    ses-source-email="support@devopscorner.id"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-config-tf-prod02
+  namespace: devops-tools
+data:
+  backend.tf: |
+    terraform {
+      backend "s3" {
+        region         = "ap-southeast-3"
+        bucket         = "tf-state-789789789789-ap-southeast-3"
+        dynamodb_table = "ddb-tf-state-789789789789-ap-southeast-3"
+        key            = "devopscorner/789789789789/atlantis/tfstate"
+        encrypt        = true
+      }
+    }
+
+  backend.tfvars: |
+    region         = "ap-southeast-3"
+    bucket         = "tf-state-789789789789-ap-southeast-3"
+    dynamodb_table = "ddb-tf-state-789789789789-ap-southeast-3"
+    key            = "devopscorner/789789789789/atlantis/tfstate"
+    encrypt        = true
+
+  uat02.tfvars: |
+    region="ap-southeast-3"
+    common-tags={
+      "Owner"="DCI"
+      "Environment"="PROD"
+    }
+
+    ses-source-email="support@devopscorner.id"

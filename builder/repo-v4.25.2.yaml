@@ -1,0 +1,318 @@
+# Repository configurations
+repos:
+- id: github.com/devopscorner/devopscorner-atlantis
+  branch: /.*/
+  apply_requirements: [approved, mergeable]
+  allowed_overrides: [workflow, plan_requirements, apply_requirements]
+  allow_custom_workflows: true
+  delete_source_branch_on_merge: true
+  workflow: dynamic-workflow
+
+workflows:
+  # Main branch workflow
+  main-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy main default plan
+    apply:
+      steps:
+      - run: atlantis-deploy main default apply
+
+  # Dynamic workflow for fallback
+  dynamic-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy $ATLANTIS_PULL_REQUEST_HEAD_BRANCH default plan
+    apply:
+      steps:
+      - run: atlantis-deploy $ATLANTIS_PULL_REQUEST_HEAD_BRANCH default apply
+
+  # DEV Workflows - Default workspace
+  dev01-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev01 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev01 default apply
+
+  dev01-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev01 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev01 staging apply
+
+  dev01-feature-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev01 feature plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev01 feature apply
+
+  dev02-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev02 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev02 default apply
+
+  dev02-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev02 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev02 staging apply
+
+  dev03-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev03 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev03 default apply
+
+  dev03-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev03 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev03 staging apply
+
+  dev04-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev04 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev04 default apply
+
+  dev04-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev04 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev04 staging apply
+
+  dev05-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev05 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev05 default apply
+
+  dev05-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy dev05 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy dev05 staging apply
+
+  # UAT Workflows
+  uat01-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat01 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat01 default apply
+
+  uat01-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat01 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat01 staging apply
+
+  uat02-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat02 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat02 default apply
+
+  uat02-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat02 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat02 staging apply
+
+  uat03-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat03 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat03 default apply
+
+  uat03-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat03 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat03 staging apply
+
+  uat04-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat04 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat04 default apply
+
+  uat04-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat04 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat04 staging apply
+
+  uat05-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat05 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat05 default apply
+
+  uat05-staging-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy uat05 staging plan
+    apply:
+      steps:
+      - run: atlantis-deploy uat05 staging apply
+
+  # PROD Workflows
+  prod01-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod01 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod01 default apply
+
+  prod01-production-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod01 production plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod01 production apply
+
+  prod02-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod02 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod02 default apply
+
+  prod02-production-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod02 production plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod02 production apply
+
+  prod03-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod03 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod03 default apply
+
+  prod03-production-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod03 production plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod03 production apply
+
+  prod04-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod04 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod04 default apply
+
+  prod04-production-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod04 production plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod04 production apply
+
+  prod05-default-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod05 default plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod05 default apply
+
+  prod05-production-workflow:
+    plan:
+      steps:
+      - run: atlantis-deploy prod05 production plan
+    apply:
+      steps:
+      - run: atlantis-deploy prod05 production apply
+
+  # Feature branch workflows for dynamic workspace support
+  feature-workflow:
+    plan:
+      steps:
+      - run: |
+          FEATURE_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/feature\///' | sed 's/\//-/g')
+          atlantis-deploy dev01 feature-$FEATURE_NAME plan
+    apply:
+      steps:
+      - run: |
+          FEATURE_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/feature\///' | sed 's/\//-/g')
+          atlantis-deploy dev01 feature-$FEATURE_NAME apply
+
+  # Bugfix branch workflows
+  bugfix-workflow:
+    plan:
+      steps:
+      - run: |
+          BUGFIX_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/bugfix\///' | sed 's/\//-/g')
+          atlantis-deploy dev01 bugfix-$BUGFIX_NAME plan
+    apply:
+      steps:
+      - run: |
+          BUGFIX_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/bugfix\///' | sed 's/\//-/g')
+          atlantis-deploy dev01 bugfix-$BUGFIX_NAME apply
+
+  # Hotfix branch workflows
+  hotfix-workflow:
+    plan:
+      steps:
+      - run: |
+          HOTFIX_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/hotfix\///' | sed 's/\//-/g')
+          atlantis-deploy prod01 hotfix-$HOTFIX_NAME plan
+    apply:
+      steps:
+      - run: |
+          HOTFIX_NAME=$(echo $ATLANTIS_PULL_REQUEST_HEAD_BRANCH | sed 's/hotfix\///' | sed 's/\//-/g')
+          atlantis-deploy prod01 hotfix-$HOTFIX_NAME apply
