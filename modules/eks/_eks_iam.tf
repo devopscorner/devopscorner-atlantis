@@ -7,6 +7,12 @@
 # ==========================================================================
 
 # --------------------------------------------------------------------------
+#  Data Sources
+# --------------------------------------------------------------------------
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+# --------------------------------------------------------------------------
 #  EC2 & Bucket Profile Roles
 # --------------------------------------------------------------------------
 resource "aws_iam_role" "iam_eks_bucket_profile" {
@@ -120,12 +126,6 @@ resource "aws_iam_role_policy_attachment" "eks_iam_container_registry_policy" {
   role       = aws_iam_role.eks_nodes.name
 }
 
-# resource "aws_iam_role_policy_attachment" "eks_iam_ec2_full_access" {
-#    provider  = aws.destination
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-#   role       = aws_iam_role.eks_nodes.name
-# }
-
 resource "aws_iam_policy" "route53_cert_policy" {
   provider = aws.destination
   name     = "aws-route53-cert-${var.eks_cluster_name}-${var.eks_name_env[local.env]}"
@@ -157,217 +157,319 @@ resource "aws_iam_role_policy_attachment" "route53_cert_policy" {
 }
 
 ##############################################################
-### EBS CSI Driver ###
+### EBS CSI Driver with Pod Identity ###
 ##############################################################
+resource "aws_iam_role" "ebs_csi_pod_identity_role" {
+  provider = aws.destination
+  name     = "${var.eks_cluster_name}-${var.eks_name_env[local.env]}-ebs-csi-driver-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "pods.eks.amazonaws.com"
+        }
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
+      }
+    ]
+  })
+
+  tags = merge(
+    local.tags,
+    local.resources_tags,
+    {
+      Name            = "${var.eks_cluster_name}-${var.eks_name_env[local.env]}-ebs-csi-driver-role"
+      Type            = "EKS-Pod-Identity"
+      ProductName     = "EKS-EBS-CSI"
+      ProductGroup    = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-EKS-CSI" : "STG-EKS-CSI"
+      Department      = "DEVOPS"
+      DepartmentGroup = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-DEVOPS" : "STG-DEVOPS"
+      ResourceGroup   = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-EKS-CSI" : "STG-EKS-CSI"
+      Services        = "EBS-CSI"
+    }
+  )
+}
+
 resource "aws_iam_policy" "ebs_csi_driver_policy" {
   provider = aws.destination
-  name     = "aws-ebs-csi-driver-${var.eks_cluster_name}-${var.eks_name_env[local.env]}"
-  policy   = <<POLICY
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:CreateSnapshot",
-                "ec2:AttachVolume",
-                "ec2:DetachVolume",
-                "ec2:ModifyVolume",
-                "ec2:DescribeAvailabilityZones",
-                "ec2:DescribeInstances",
-                "ec2:DescribeSnapshots",
-                "ec2:DescribeTags",
-                "ec2:DescribeVolumes",
-                "ec2:DescribeVolumesModifications"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:CreateTags"
-            ],
-            "Resource": [
-                "arn:aws:ec2:*:*:volume/*",
-                "arn:aws:ec2:*:*:snapshot/*"
-            ],
-            "Condition": {
-                "StringEquals": {
-                    "ec2:CreateAction": [
-                        "CreateVolume",
-                        "CreateSnapshot"
-                    ]
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DeleteTags"
-            ],
-            "Resource": [
-                "arn:aws:ec2:*:*:volume/*",
-                "arn:aws:ec2:*:*:snapshot/*"
+  name     = "${var.eks_cluster_name}-${var.eks_name_env[local.env]}-ebs-csi-driver-policy"
+  description = "IAM policy for EBS CSI driver with Pod Identity"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:CreateSnapshot",
+          "ec2:AttachVolume",
+          "ec2:DetachVolume",
+          "ec2:ModifyVolume",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeInstances",
+          "ec2:DescribeSnapshots",
+          "ec2:DescribeTags",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeVolumesModifications"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:CreateTags"
+        ]
+        Resource = [
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:snapshot/*"
+        ]
+        Condition = {
+          StringEquals = {
+            "ec2:CreateAction" = [
+              "CreateVolume",
+              "CreateSnapshot"
             ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:CreateVolume"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "aws:RequestTag/ebs.csi.aws.com/cluster": "true"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:CreateVolume"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "aws:RequestTag/CSIVolumeName": "*"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DeleteVolume"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "ec2:ResourceTag/ebs.csi.aws.com/cluster": "true"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DeleteVolume"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "ec2:ResourceTag/CSIVolumeName": "*"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DeleteVolume"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "ec2:ResourceTag/kubernetes.io/created-for/pvc/name": "*"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DeleteSnapshot"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "ec2:ResourceTag/CSIVolumeSnapshotName": "*"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DeleteSnapshot"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "ec2:ResourceTag/ebs.csi.aws.com/cluster": "true"
-                }
-            }
+          }
         }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DeleteTags"
+        ]
+        Resource = [
+          "arn:aws:ec2:*:*:volume/*",
+          "arn:aws:ec2:*:*:snapshot/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:CreateVolume"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "aws:RequestTag/ebs.csi.aws.com/cluster" = "true"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:CreateVolume"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "aws:RequestTag/CSIVolumeName" = "*"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DeleteVolume"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "ec2:ResourceTag/ebs.csi.aws.com/cluster" = "true"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DeleteVolume"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "ec2:ResourceTag/CSIVolumeName" = "*"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DeleteVolume"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "ec2:ResourceTag/kubernetes.io/created-for/pvc/name" = "*"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DeleteSnapshot"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "ec2:ResourceTag/CSIVolumeSnapshotName" = "*"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DeleteSnapshot"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "ec2:ResourceTag/ebs.csi.aws.com/cluster" = "true"
+          }
+        }
+      }
     ]
-}
-POLICY
+  })
+
+  tags = merge(
+    local.tags,
+    local.resources_tags,
+    {
+      Name            = "${var.eks_cluster_name}-${var.eks_name_env[local.env]}-ebs-csi-driver-policy"
+      Type            = "IAM-Policy"
+      ProductName     = "EKS-EBS-CSI"
+      ProductGroup    = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-EKS-CSI" : "STG-EKS-CSI"
+      Department      = "DEVOPS"
+      DepartmentGroup = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-DEVOPS" : "STG-DEVOPS"
+      ResourceGroup   = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-EKS-CSI" : "STG-EKS-CSI"
+      Services        = "EBS-CSI"
+    }
+  )
 }
 
-resource "aws_iam_role_policy_attachment" "ebs_csi_driver_policy" {
+resource "aws_iam_role_policy_attachment" "ebs_csi_driver_policy_attachment" {
   provider   = aws.destination
+  role       = aws_iam_role.ebs_csi_pod_identity_role.name
   policy_arn = aws_iam_policy.ebs_csi_driver_policy.arn
-  role       = aws_iam_role.eks_nodes.name
 }
 
 ##############################################################
-### EFS CSI Driver ###
+### EFS CSI Driver with Pod Identity ###
 ##############################################################
+resource "aws_iam_role" "efs_csi_pod_identity_role" {
+  provider = aws.destination
+  name     = "${var.eks_cluster_name}-${var.eks_name_env[local.env]}-efs-csi-driver-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "pods.eks.amazonaws.com"
+        }
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
+      }
+    ]
+  })
+
+  tags = merge(
+    local.tags,
+    local.resources_tags,
+    {
+      Name            = "${var.eks_cluster_name}-${var.eks_name_env[local.env]}-efs-csi-driver-role"
+      Type            = "EKS-Pod-Identity"
+      ProductName     = "EKS-EFS-CSI"
+      ProductGroup    = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-EKS-CSI" : "STG-EKS-CSI"
+      Department      = "DEVOPS"
+      DepartmentGroup = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-DEVOPS" : "STG-DEVOPS"
+      ResourceGroup   = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-EKS-CSI" : "STG-EKS-CSI"
+      Services        = "EFS-CSI"
+    }
+  )
+}
+
 resource "aws_iam_policy" "efs_csi_driver_policy" {
   provider = aws.destination
-  name     = "aws-efs-csi-driver-${var.eks_cluster_name}-${var.eks_name_env[local.env]}"
-  policy   = <<POLICY
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "elasticfilesystem:DescribeAccessPoints",
-                "elasticfilesystem:DescribeFileSystems",
-                "elasticfilesystem:DescribeMountTargets",
-                "ec2:DescribeAvailabilityZones"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "elasticfilesystem:CreateAccessPoint"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "aws:RequestTag/efs.csi.aws.com/cluster": "true"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "elasticfilesystem:TagResource"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "aws:ResourceTag/efs.csi.aws.com/cluster": "true"
-                }
-            }
-        },
-        {
-            "Effect": "Allow",
-            "Action": "elasticfilesystem:DeleteAccessPoint",
-            "Resource": "*",
-            "Condition": {
-                "StringEquals": {
-                    "aws:ResourceTag/efs.csi.aws.com/cluster": "true"
-                }
-            }
+  name     = "${var.eks_cluster_name}-${var.eks_name_env[local.env]}-efs-csi-driver-policy"
+  description = "IAM policy for EFS CSI driver with Pod Identity"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "elasticfilesystem:DescribeAccessPoints",
+          "elasticfilesystem:DescribeFileSystems",
+          "elasticfilesystem:DescribeMountTargets",
+          "ec2:DescribeAvailabilityZones"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "elasticfilesystem:CreateAccessPoint"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "aws:RequestTag/efs.csi.aws.com/cluster" = "true"
+          }
         }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "elasticfilesystem:TagResource"
+        ]
+        Resource = "*"
+        Condition = {
+          StringLike = {
+            "aws:ResourceTag/efs.csi.aws.com/cluster" = "true"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = "elasticfilesystem:DeleteAccessPoint"
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "aws:ResourceTag/efs.csi.aws.com/cluster" = "true"
+          }
+        }
+      }
     ]
-}
-POLICY
+  })
+
+  tags = merge(
+    local.tags,
+    local.resources_tags,
+    {
+      Name            = "${var.eks_cluster_name}-${var.eks_name_env[local.env]}-efs-csi-driver-policy"
+      Type            = "IAM-Policy"
+      ProductName     = "EKS-EFS-CSI"
+      ProductGroup    = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-EKS-CSI" : "STG-EKS-CSI"
+      Department      = "DEVOPS"
+      DepartmentGroup = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-DEVOPS" : "STG-DEVOPS"
+      ResourceGroup   = "${var.eks_name_env[local.env]}" == "prod" ? "PROD-EKS-CSI" : "STG-EKS-CSI"
+      Services        = "EFS-CSI"
+    }
+  )
 }
 
-resource "aws_iam_role_policy_attachment" "efs_csi_driver_policy" {
+resource "aws_iam_role_policy_attachment" "efs_csi_driver_policy_attachment" {
   provider   = aws.destination
+  role       = aws_iam_role.efs_csi_pod_identity_role.name
   policy_arn = aws_iam_policy.efs_csi_driver_policy.arn
-  role       = aws_iam_role.eks_nodes.name
 }
 
 ##############################################################
@@ -620,6 +722,7 @@ resource "aws_iam_policy" "load_balancer_controller_policy" {
 }
 POLICY
 }
+
 resource "aws_iam_role_policy_attachment" "load_balancer_controller_policy" {
   provider   = aws.destination
   policy_arn = aws_iam_policy.load_balancer_controller_policy.arn
@@ -629,8 +732,6 @@ resource "aws_iam_role_policy_attachment" "load_balancer_controller_policy" {
 ##############################################################
 ### EKS Cluster Autoscaler (CA) ###
 ##############################################################
-data "aws_caller_identity" "current" {}
-
 locals {
   cluster_oidc_path = format("oidc.eks.%s.amazonaws.com/id/%s", "${var.aws_region}", join("", regex("https://([^.]+).+", "${aws_eks_cluster.aws_eks.endpoint}")))
 }
@@ -686,23 +787,6 @@ resource "aws_iam_role_policy" "cluster_autoscaler_policy" {
     ]
   })
 }
-
-
-# resource "null_resource" "eks_cluster_autoscaler_role" {
-#   provider = aws.destination
-#   triggers = {
-#     cluster_autoscaler_role = "${aws_iam_role.cluster_autoscaler_role.arn}"
-#   }
-#   provisioner "local-exec" {
-#     command = <<-EOT
-#       kubectl patch ServiceAccount cluster-autoscaler -n kube-system --patch \
-#       '{"metadata":{"annotations":{"eks.amazonaws.com/role-arn": "${aws_iam_role.cluster_autoscaler_role.arn}"}}}'
-#     EOT
-#   }
-#   depends_on = [
-#     aws_eks_cluster.aws_eks
-#   ]
-# }
 
 resource "aws_iam_role_policy" "node_autoscaler_policy" {
   provider = aws.destination

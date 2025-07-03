@@ -53,7 +53,7 @@ resource "random_pet" "this" {
 }
 
 module "s3_bucket" {
-  source = "github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=v3.14.0"
+  source = "github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=v3.15.2"
 
   bucket        = local.bucket_name
   acl           = "private"
