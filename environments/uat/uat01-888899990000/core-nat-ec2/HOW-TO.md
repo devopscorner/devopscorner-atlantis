@@ -1,4 +1,4 @@
-# Terraform EKS for 098765432101
+# Terraform Core Infrastructure for 888899990000
 
 ## How-to-Use
 
@@ -39,7 +39,7 @@
   $HOME/.aws/config
   ---
   [profile AWSCB-TF-User-Executor]
-  role_arn = arn:aws:iam::098765432101:role/TF-Central-Role_098765432101
+  role_arn = arn:aws:iam::888899990000:role/TF-Central-Role_888899990000
   source_profile = AWSCB-TF-User-Executor
   region = ap-southeast-3
   output = json

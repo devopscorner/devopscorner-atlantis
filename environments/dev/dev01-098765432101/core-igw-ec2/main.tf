@@ -1,5 +1,5 @@
 # ==========================================================================
-#  112233445566 - Core: main.tf
+#  098765432101 - Core: main.tf
 # --------------------------------------------------------------------------
 #  Description:
 #    Main Terraform Module
@@ -54,7 +54,6 @@ module "core" {
   peer_owner_id    = var.peer_owner_id
   propagating_vgws = var.propagating_vgws
   ec2_prefix       = var.ec2_prefix
-  # nat_ec2_prefix   = var.nat_ec2_prefix
   ec2_private_a    = var.ec2_private_a
   ec2_private_b    = var.ec2_private_b
   ec2_private_c    = var.ec2_private_c
@@ -64,6 +63,7 @@ module "core" {
   ec2_rt_prefix    = var.ec2_rt_prefix
   igw_prefix       = var.igw_prefix
   igw_rt_prefix    = var.igw_rt_prefix
+  # nat_ec2_prefix   = var.nat_ec2_prefix
   # nat_prefix       = var.nat_prefix
   # nat_rt_prefix    = var.nat_rt_prefix
 }

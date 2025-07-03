@@ -21,7 +21,7 @@
 variable "coreinfra" {
   description = "Core Infrastrucre Name Prefix"
   type        = string
-  default     = "dci-tf-mgmt"
+  default     = "dci-tf-awscb"
 }
 
 # --------------------------------------------------------------------------

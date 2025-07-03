@@ -19,10 +19,10 @@ variable "kms_key" {
   type        = map(string)
   description = "KMS Key References"
   default = {
-    default = "arn:aws:kms:ap-southeast-3:098765432101:key/HASH_KEY"
-    lab     = "arn:aws:kms:ap-southeast-3:098765432101:key/HASH_KEY"
-    staging = "arn:aws:kms:ap-southeast-3:098765432101:key/HASH_KEY"
-    prod    = "arn:aws:kms:ap-southeast-3:098765432101:key/HASH_KEY"
+    default = "arn:aws:kms:ap-southeast-3:098765432101:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
+    lab     = "arn:aws:kms:ap-southeast-3:098765432101:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
+    staging = "arn:aws:kms:ap-southeast-3:098765432101:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
+    prod    = "arn:aws:kms:ap-southeast-3:098765432101:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
   }
 }
 
@@ -61,13 +61,13 @@ variable "aws_account_id_destination" {
 variable "aws_account_profile_source" {
   description = "The AWS Profile management"
   type        = string
-  default     = "DCI-TF-User-Executor"
+  default     = "AWSCB-TF-User-Executor"
 }
 
 variable "aws_account_profile_destination" {
   description = "The AWS Profile to deploy the Budget in"
   type        = string
-  default     = "DCI-TF-User-Executor"
+  default     = "AWSCB-TF-User-Executor"
 }
 
 variable "aws_access_key" {

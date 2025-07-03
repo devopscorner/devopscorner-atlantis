@@ -18,19 +18,19 @@
 variable "group_dci_developer" {
   description = "Developer Group Name"
   type        = string
-  default     = "dci-developer"
+  default     = "awscb-developer"
 }
 
 variable "group_dci_administrator" {
   description = "Administrator Group Name"
   type        = string
-  default     = "dci-administrator"
+  default     = "awscb-administrator"
 }
 
 variable "group_dci_billing" {
   description = "Billing Group Name"
   type        = string
-  default     = "dci-billing"
+  default     = "awscb-billing"
 }
 
 # --------------------------------------------------------------------------
@@ -39,19 +39,19 @@ variable "group_dci_billing" {
 variable "policy_dci_developer" {
   description = "Developer Policy Name"
   type        = string
-  default     = "dci-developer-policy"
+  default     = "awscb-developer-policy"
 }
 
 variable "policy_dci_administrator" {
   description = "Administrator Policy Name"
   type        = string
-  default     = "dci-administrator-policy"
+  default     = "awscb-administrator-policy"
 }
 
 variable "policy_dci_billing" {
   description = "Billing Policy Name"
   type        = string
-  default     = "dci-billing-policy"
+  default     = "awscb-billing-policy"
 }
 
 # --------------------------------------------------------------------------

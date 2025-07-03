@@ -1,5 +1,5 @@
 # ==========================================================================
-#  888899990000 - EKS: variable.tf
+#  098765432101 - Core: variable.tf
 # --------------------------------------------------------------------------
 #  Description:
 #    Global Variable
@@ -19,10 +19,10 @@ variable "kms_key" {
   type        = map(string)
   description = "KMS Key References"
   default = {
-    default = "arn:aws:kms:ap-southeast-3:888899990000:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
-    lab     = "arn:aws:kms:ap-southeast-3:888899990000:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
-    staging = "arn:aws:kms:ap-southeast-3:888899990000:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
-    prod    = "arn:aws:kms:ap-southeast-3:888899990000:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
+    default = "arn:aws:kms:ap-southeast-3:098765432101:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
+    lab     = "arn:aws:kms:ap-southeast-3:098765432101:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
+    staging = "arn:aws:kms:ap-southeast-3:098765432101:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
+    prod    = "arn:aws:kms:ap-southeast-3:098765432101:key/mrk-b6d48bacceab43caa45274fe6e0309c3"
   }
 }
 
@@ -49,13 +49,13 @@ variable "aws_region" {
 variable "aws_account_id_source" {
   description = "The AWS Account ID management"
   type        = string
-  default     = "888899990000"
+  default     = "098765432101"
 }
 
 variable "aws_account_id_destination" {
   description = "The AWS Account ID to deploy the Budget in"
   type        = string
-  default     = "888899990000"
+  default     = "098765432101"
 }
 
 variable "aws_account_profile_source" {

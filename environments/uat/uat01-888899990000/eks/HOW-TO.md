@@ -32,15 +32,15 @@
   ```
   $HOME/.aws/credentials
   ---
-  [DCI-TF-User-Executor]
+  [AWSCB-TF-User-Executor]
   aws_access_key_id =
   aws_secret_access_key =
 
   $HOME/.aws/config
   ---
-  [profile DCI-TF-User-Executor]
+  [profile AWSCB-TF-User-Executor]
   role_arn = arn:aws:iam::888899990000:role/TF-Central-Role_888899990000
-  source_profile = DCI-TF-User-Executor
+  source_profile = AWSCB-TF-User-Executor
   region = ap-southeast-3
   output = json
   ```
@@ -49,7 +49,7 @@
 
   ```
   unset AWS_SESSION_TOKEN AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID
-  export AWS_PROFILE=DCI-TF-User-Executor
+  export AWS_PROFILE=AWSCB-TF-User-Executor
   export AWS_DEFAULT_REGION=ap-southeast-3
   aws sts get-caller-identity --profile $AWS_PROFILE
   ```

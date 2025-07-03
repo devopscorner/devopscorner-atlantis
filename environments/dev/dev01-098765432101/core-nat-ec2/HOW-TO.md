@@ -1,4 +1,4 @@
-# Terraform EKS for 098765432101
+# Terraform Core Infrastructure for 098765432101
 
 ## How-to-Use
 

@@ -1,5 +1,5 @@
 # ==========================================================================
-#  098765432101 - EKS: core-vars.tf
+#  112233445566 - Core: core-vars.tf
 # --------------------------------------------------------------------------
 #  Description
 #    Core Infrastructure Spesific Variable
@@ -11,8 +11,8 @@
 #    - Core VPC Gateway Propagating
 #    - Core VPC CIDR Secondary Zone A
 #    - Core VPC CIDR Secondary Zone B
-#    - Core Prefix EKS
-#    - Core Prefix NAT EKS
+#    - Core Prefix EC2
+#    - Core Prefix NAT EC2
 # ==========================================================================
 
 # --------------------------------------------------------------------------
@@ -102,108 +102,108 @@ variable "propagating_vgws" {
 # --------------------------------------------------------------------------
 #  Infra Prefix
 # --------------------------------------------------------------------------
-# EKS Prefix
-variable "eks_prefix" {
-  description = "EKS Prefix Name"
+# EC2 Prefix
+variable "ec2_prefix" {
+  description = "EC2 Prefix Name"
   type        = string
-  default     = "eks"
+  default     = "ec2"
 }
 
 # --------------------------------------------------------------------------
 #  NAT Gateway
 # --------------------------------------------------------------------------
-# NAT EKS Prefix
-variable "nat_eks_prefix" {
-  description = "NAT EKS Prefix Name"
+# NAT EC2 Prefix
+variable "nat_ec2_prefix" {
+  description = "NAT EC2 Prefix Name"
   type        = string
-  default     = "natgw_eks"
+  default     = "natgw_ec2"
 }
 
 # --------------------------------------------------------------------------
 #  Subnet
 # --------------------------------------------------------------------------
-## EKS Private
-variable "eks_private_a" {
-  description = "Private Subnet for EKS Zone A"
+## EC2 Private
+variable "ec2_private_a" {
+  description = "Private Subnet for EC2 Zone A"
   type        = map(string)
   default = {
-    default = "10.16.64.0/21"
-    lab     = "10.16.64.0/21"
-    staging = "10.32.64.0/21"
-    nonprod = "10.32.64.0/21"
-    prod    = "10.48.64.0/21"
+    default = "10.16.16.0/21"
+    lab     = "10.16.16.0/21"
+    staging = "10.32.16.0/21"
+    nonprod = "10.32.16.0/21"
+    prod    = "10.48.16.0/21"
   }
 }
 
-variable "eks_private_b" {
-  description = "Private Subnet for EKS Zone B"
+variable "ec2_private_b" {
+  description = "Private Subnet for EC2 Zone B"
   type        = map(string)
   default = {
-    default = "10.16.72.0/21"
-    lab     = "10.16.72.0/21"
-    staging = "10.32.72.0/21"
-    nonprod = "10.32.72.0/21"
-    prod    = "10.48.72.0/21"
+    default = "10.16.24.0/21"
+    lab     = "10.16.24.0/21"
+    staging = "10.32.24.0/21"
+    nonprod = "10.32.24.0/21"
+    prod    = "10.48.24.0/21"
   }
 }
 
-variable "eks_private_c" {
-  description = "Private Subnet for EKS Zone C"
+variable "ec2_private_c" {
+  description = "Private Subnet for EC2 Zone C"
   type        = map(string)
   default = {
-    default = "10.16.80.0/21"
-    lab     = "10.16.80.0/21"
-    staging = "10.32.80.0/21"
-    nonprod = "10.32.80.0/21"
-    prod    = "10.48.80.0/21"
+    default = "10.16.32.0/21"
+    lab     = "10.16.32.0/21"
+    staging = "10.32.32.0/21"
+    nonprod = "10.32.32.0/21"
+    prod    = "10.48.32.0/21"
   }
 }
 
-## EKS Public
-variable "eks_public_a" {
-  description = "Public Subnet for EKS Zone A"
+## EC2 Public
+variable "ec2_public_a" {
+  description = "Public Subnet for EC2 Zone A"
   type        = map(string)
   default = {
-    default = "10.16.88.0/21"
-    lab     = "10.16.88.0/21"
-    staging = "10.32.88.0/21"
-    nonprod = "10.32.88.0/21"
-    prod    = "10.48.88.0/21"
+    default = "10.16.40.0/21"
+    lab     = "10.16.40.0/21"
+    staging = "10.32.40.0/21"
+    nonprod = "10.32.40.0/21"
+    prod    = "10.48.40.0/21"
   }
 }
 
-variable "eks_public_b" {
-  description = "Public Subnet for EKS Zone B"
+variable "ec2_public_b" {
+  description = "Public Subnet for EC2 Zone B"
   type        = map(string)
   default = {
-    default = "10.16.96.0/21"
-    lab     = "10.16.96.0/21"
-    staging = "10.32.96.0/21"
-    nonprod = "10.32.96.0/21"
-    prod    = "10.48.96.0/21"
+    default = "10.16.48.0/21"
+    lab     = "10.16.48.0/21"
+    staging = "10.32.48.0/21"
+    nonprod = "10.32.48.0/21"
+    prod    = "10.48.48.0/21"
   }
 }
 
-variable "eks_public_c" {
-  description = "Public Subnet for EKS Zone C"
+variable "ec2_public_c" {
+  description = "Public Subnet for EC2 Zone C"
   type        = map(string)
   default = {
-    default = "10.16.104.0/21"
-    lab     = "10.16.104.0/21"
-    staging = "10.32.104.0/21"
-    nonprod = "10.32.104.0/21"
-    prod    = "10.48.104.0/21"
+    default = "10.16.56.0/21"
+    lab     = "10.16.56.0/21"
+    staging = "10.32.56.0/21"
+    nonprod = "10.32.56.0/21"
+    prod    = "10.48.56.0/21"
   }
 }
 
 # --------------------------------------------------------------------------
 #  Routing Table
 # --------------------------------------------------------------------------
-# EKS RT Prefix
-variable "eks_rt_prefix" {
-  description = "NAT EKS Routing Table Prefix Name"
+# EC2 RT Prefix
+variable "ec2_rt_prefix" {
+  description = "NAT EC2 Routing Table Prefix Name"
   type        = string
-  default     = "eks-rt"
+  default     = "ec2-rt"
 }
 
 # --------------------------------------------------------------------------
